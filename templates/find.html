@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <h1>Find a Library Item</h1>
+{% endblock %}
+
+{% block body %}
+    <form method="POST">
+        <label for="title">Search by Title:</label>
+        <input type="text" id="title" name="title" required>
+        <button type="submit">Search</button>
+    </form>
+
+    {% if results %}
+        <h2>Search Results:</h2>
+        <ul>
+        {% for item in results %}
+            <li>
+                <strong>{{ item[1] }}</strong> — Copies: {{ item[2] }} (ID: {{ item[0] }})<br>
+                {% if item[3] %}
+                    ISBN: {{ item[3] }}<br>
+                    Publisher: {{ item[4] }}<br>
+                    Author: {{ item[5] }}<br>
+                {% endif %}
+            </li><br>
+        {% endfor %}
+        </ul>
+    {% elif request.method == 'POST' %}
+        <p>No results found.</p>
+    {% endif %}
+{% endblock %}
