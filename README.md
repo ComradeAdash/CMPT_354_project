@@ -21,3 +21,15 @@ $ source ./env/bin/activate
 ```
 $ (env) pip install -r requirements.txt
 ```
+5. To create database schema run:
+```
+$ python setup_db.py 
+
+```
+6. To insert the 10 realistic tuples run:
+```
+$ python seed_data.py
+
+```
+
+7. To look at Library Items
