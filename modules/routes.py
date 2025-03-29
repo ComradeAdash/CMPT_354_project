@@ -9,6 +9,18 @@ def init_routes(app):
     def index():
         return render_template('index.html', template_folder='../templates')
 
+    @app.route('/findEvent')
+    def show_events():
+        conn = sqlite3.connect('library.db')
+        cur = conn.cursor()
+        cur.execute('''
+            SELECT *
+            FROM LibraryEvents le
+        ''')
+        events = cur.fetchall()
+        conn.close()
+        return render_template('findEvent.html', events=events)
+
     @app.route('/items')
     def show_items():
         conn = sqlite3.connect('library.db')
@@ -61,3 +73,14 @@ def init_routes(app):
             conn.close()
         return render_template('findEvent.html', eventResults=eventResults)
 
+    @app.route('/registerEvent', methods=['GET', 'POST'])
+    def register_event():
+        # we get the user to fill in their information on the html form
+        # this information will be inserted and then they can select an event to register for (we will fill in the registered table)
+        pass
+    
+    # ask a librarian for recommendations based on a title / genre, query items based on that specific result and 
+    # treat it as a recommendation. 
+    @app.route('/ask', methods=['GET', 'POST'])
+    def ask_librarian():
+        pass

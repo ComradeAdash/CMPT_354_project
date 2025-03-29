@@ -22,11 +22,83 @@
                     Date: {{ item[4] }}<br>
                     Start Time: {{ item[5] }}<br>
                     End Time: {{ item[6] }}<br>
+                    <!-- Button to open the form -->
+                    <button id="openEventForm" onclick="openForm()">Register For Event</button>
+
+                    <!-- The Modal (Pop-up form) -->
+                    <div id="myModal" class="modal">
+                        <div class="modal-content">
+                            <span class="close" onclick="closeForm()">&times;</span>
+                            <h2>Submit Your Details</h2>
+                            
+                            <!-- Submit the data to flask for database insertion-->
+                             <!-- We need to keep track of the #users in the database, using a query and we can add that here to get a correct userId on input-->
+                            <form action="/submit" method="POST">
+                                <input type="text" name="name" placeholder="Your Name" required><br>
+                                <input type="email" name="email" placeholder="Your Email" required><br>
+                                <input type="tel" name="phone" placeholder="Your Phone Number" required pattern="[0-9]{10}">
+                                <button type="submit">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <script>
+                        function openForm() {
+                            document.getElementById("myModal").style.display = "block";
+                        }
+
+                        function closeForm() {
+                            document.getElementById("myModal").style.display = "none";
+                        }
+                    </script>
                 {% endif %}
             </li><br>
         {% endfor %}
         </ul>
     {% elif request.method == 'POST' %}
         <p>No results found.</p>
+    {% else %}
+        <h2>All Events:</h2>
+        {% for item in events %}
+        <li>
+            <strong>{{ item[2] }}</strong> — {{ item[1] }} (ID: {{ item[0] }})<br>
+                {% if item[3] %}
+                    Audience: {{ item[3] }}<br>
+                    Date: {{ item[4] }}<br>
+                    Start Time: {{ item[5] }}<br>
+                    End Time: {{ item[6] }}<br>
+                    <!-- Button to open the form -->
+                    <button id="openEventForm" onclick="openForm()">Register For Event</button>
+
+                    <!-- The Modal (Pop-up form) -->
+                    <div id="myModal" class="modal">
+                        <div class="modal-content">
+                            <span class="close" onclick="closeForm()">&times;</span>
+                            <h2>Submit Your Details</h2>
+                            
+                            <!-- Submit the data to flask for database insertion-->
+                             <!-- We need to keep track of the #users in the database, using a query and we can add that here to get a correct userId on input-->
+                            <form action="/submit" method="POST">
+                                <input type="text" name="name" placeholder="Your Name" required><br>
+                                <input type="email" name="email" placeholder="Your Email" required><br>
+                                <input type="tel" name="phone" placeholder="Your Phone Number" required pattern="[0-9]{10}">
+                                <button type="submit">Submit</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <script>
+                        function openForm() {
+                            document.getElementById("myModal").style.display = "block";
+                        }
+
+                        function closeForm() {
+                            document.getElementById("myModal").style.display = "none";
+                        }
+                    </script>
+                {% endif %}
+        </li>   
+        <br>
+    {% endfor %}
     {% endif %}
 {% endblock %}
