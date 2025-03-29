@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <h1>Find a Library Event</h1>
+{% endblock %}
+
+{% block body %}
+    <form method="POST">
+        <label for="title">Search by Event Title:</label>
+        <input type="text" id="title" name="title" required>
+        <button type="submit">Search</button>
+    </form>
+
+    {% if eventResults %}
+        <h2>Search Results:</h2>
+        <ul>
+        {% for item in eventResults %}
+            <li>
+                <strong>{{ item[2] }}</strong> — {{ item[1] }} (ID: {{ item[0] }})<br>
+                {% if item[3] %}
+                    Audience: {{ item[3] }}<br>
+                    Date: {{ item[4] }}<br>
+                    Start Time: {{ item[5] }}<br>
+                    End Time: {{ item[6] }}<br>
+                {% endif %}
+            </li><br>
+        {% endfor %}
+        </ul>
+    {% elif request.method == 'POST' %}
+        <p>No results found.</p>
+    {% endif %}
+{% endblock %}

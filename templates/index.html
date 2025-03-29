@@ -5,4 +5,15 @@
 {% endblock %}
 
 {% block body %}
+<ul>
+    <li>
+        <a href="{{ url_for('show_items') }}">View Library Items</a>
+    </li>
+    <li>
+        <a href="{{ url_for('find_item') }}">Search Library Items</a>
+    </li>
+    <li>
+        <a href="{{ url_for('find_event') }}">Search Library Events</a>
+    </li>
+</ul>
 {% endblock %}

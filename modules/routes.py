@@ -44,4 +44,20 @@ def init_routes(app):
             results = cur.fetchall()
             conn.close()
         return render_template('find.html', results=results)
+    
+    @app.route('/findEvent', methods=['GET', 'POST'])
+    def find_event():
+        eventResults = []
+        if request.method == 'POST':
+            search_query = request.form['title']
+            conn = sqlite3.connect('library.db')
+            cur = conn.cursor()
+            cur.execute('''
+                SELECT *
+                FROM LibraryEvents le
+                WHERE le.title LIKE ?
+            ''', (f'%{search_query}%',))
+            eventResults = cur.fetchall()
+            conn.close()
+        return render_template('findEvent.html', eventResults=eventResults)
 
