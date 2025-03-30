@@ -5,6 +5,23 @@ from flask import Flask, render_template, url_for, request
 import sqlite3
 
 def init_routes(app):
+
+    
+    # Utility Methods
+
+    def get_row_count(tableName):
+        conn = sqlite3.connect('library.db')
+        cur = conn.cursor()
+        cur.execute(f'''
+            SELECT COUNT(*)
+            FROM {tableName}
+        ''')
+        user_amnt = cur.fetchone()[0]
+        conn.close()
+        return user_amnt
+    
+    # ----------------------------
+
     @app.route('/')
     def index():
         return render_template('index.html', template_folder='../templates')
@@ -56,7 +73,7 @@ def init_routes(app):
             results = cur.fetchall()
             conn.close()
         return render_template('find.html', results=results)
-    
+        
     @app.route('/findEvent', methods=['GET', 'POST'])
     def find_event():
         eventResults = []
@@ -77,10 +94,27 @@ def init_routes(app):
     def register_event():
         # we get the user to fill in their information on the html form
         # this information will be inserted and then they can select an event to register for (we will fill in the registered table)
+         if request.method == 'POST':
+            search_query = request.form['title']
+            conn = sqlite3.connect('library.db')
+            user = (get_row_count(LibraryUsers) + 1,request.form['name'],request.form['email'],request.form['phone'])
+            cur = conn.cursor()
+        
+            cur.execute('''
+                INSERT INTO LibraryUsers (user_id, name, email, phone_number) VALUES (?, ?, ?, ?)"
+            ''',user)
+            conn.close()
+            return
+
+    # ask_librarian and volunteer will be popups on the the homepage. 
+    @app.route('/index', methods=['GET', 'POST'])
+    def ():
         pass
-    
-    # ask a librarian for recommendations based on a title / genre, query items based on that specific result and 
-    # treat it as a recommendation. 
-    @app.route('/ask', methods=['GET', 'POST'])
+
+    @app.route('/index', methods=['GET', 'POST'])
     def ask_librarian():
+        pass
+
+    @app.route('/index', methods=['GET', 'POST'])
+    def volunteer():
         pass
