@@ -55,3 +55,36 @@ em {
     font-style: italic;
     color: gray;
 }
+
+.card {
+    background: white;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
+}
+
+.action-button {
+    background-color: #40338f;
+    color: white;
+    padding: 0.6rem 1rem;
+    margin-top: 1rem;
+    border: none;
+    width: 100%;
+    font-size: 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.action-button:hover {
+    background-color: #5c4dc4;
+}
+
+.alert {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 5px;
+    border: 1px solid #c3e6cb;
+}

@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block head %}
+  <h1>Donate an Item</h1>
+  <script>
+    function showFields() {
+      const type = document.getElementById("type").value;
+      document.querySelectorAll(".subtype").forEach(div => div.style.display = 'none');
+      if (type) document.getElementById(type).style.display = 'block';
+    }
+  </script>
+{% endblock %}
+
+{% block body %}
+  <form method="POST">
+    <input type="text" name="title" placeholder="Item Title" required><br>
+    <input type="number" name="copies" placeholder="Number of Copies" min="1" required><br>
+
+    <label>Item Type:</label>
+    <select name="type" id="type" onchange="showFields()" required>
+      <option value="">-- Select Type --</option>
+      <option value="PrintBooks">Print Book</option>
+      <option value="Records">Record</option>
+      <option value="Magazines">Magazine</option>
+      <option value="OnlineBooks">Online Book</option>
+      <option value="CDs">CD</option>
+    </select><br><br>
+
+    <!-- PrintBooks -->
+    <div class="subtype" id="PrintBooks" style="display:none;">
+      <input type="text" name="isbn" placeholder="ISBN"><br>
+      <input type="text" name="publisher" placeholder="Publisher"><br>
+      <input type="text" name="author" placeholder="Author"><br>
+    </div>
+
+    <!-- Records -->
+    <div class="subtype" id="Records" style="display:none;">
+      <input type="text" name="format" placeholder="Format"><br>
+      <input type="text" name="artist" placeholder="Artist"><br>
+    </div>
+
+    <!-- Magazines -->
+    <div class="subtype" id="Magazines" style="display:none;">
+      <input type="text" name="issn" placeholder="ISSN"><br>
+    </div>
+
+    <!-- Online Books -->
+    <div class="subtype" id="OnlineBooks" style="display:none;">
+      <input type="text" name="online_isbn" placeholder="ISBN"><br>
+    </div>
+
+    <!-- CDs -->
+    <div class="subtype" id="CDs" style="display:none;">
+      <input type="text" name="genre" placeholder="Genre"><br>
+    </div>
+
+    <button class="action-button" type="submit">Donate</button>
+  </form>
+
+  {% if message %}
+    <p>{{ message }}</p>
+  {% endif %}
+{% endblock %}

@@ -5,27 +5,49 @@
 {% endblock %}
 
 {% block body %}
+    {% if message %}
+        <div class="alert">
+            {{ message }}
+        </div>
+    {% endif %}
+
     <form method="POST">
         <label for="title">Search by Title:</label>
-        <input type="text" id="title" name="title" required>
+        <input type="text" id="title" name="title" value="{{ search_query }}">
         <button type="submit">Search</button>
     </form>
 
-    {% if results %}
-        <h2>Search Results:</h2>
-        <ul>
-        {% for item in results %}
+    <h2>All Results:</h2>
+    {% for item in results %}
+        <div class="card">
             <li>
                 <strong>{{ item[1] }}</strong> — Copies: {{ item[2] }} (ID: {{ item[0] }})<br>
-                {% if item[3] %}
+
+                {% if item[3] %}  {# PrintBook info #}
+                    <strong>Print Book</strong><br>
                     ISBN: {{ item[3] }}<br>
                     Publisher: {{ item[4] }}<br>
                     Author: {{ item[5] }}<br>
+                {% elif item[6] %}  {# Record info #}
+                    <strong>Record</strong><br>
+                    Format: {{ item[6] }}<br>
+                    Artist: {{ item[7] }}<br>
+                {% elif item[8] %}  {# Magazine info #}
+                    <strong>Magazine</strong><br>
+                    ISSN: {{ item[8] }}<br>
+                {% elif item[9] %}  {# Online Book info #}
+                    <strong>Online Book</strong><br>
+                    ISBN: {{ item[9] }}<br>
+                {% elif item[10] %}  {# CD info #}
+                    <strong>CD</strong><br>
+                    Genre: {{ item[10] }}<br>
                 {% endif %}
-            </li><br>
-        {% endfor %}
-        </ul>
-    {% elif request.method == 'POST' %}
-        <p>No results found.</p>
-    {% endif %}
+            </li>
+            <form method="POST" action="{{ url_for('borrow_item') }}">
+                <input type="hidden" name="item_id" value="{{ item[0] }}">
+                <input type="number" name="user_id" placeholder="Enter your User ID" required>
+                <button class="action-button" type="submit">Borrow</button>
+            </form>            
+        </div>
+    {% endfor %}
 {% endblock %}
