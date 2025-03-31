@@ -2,11 +2,22 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}">
+    <title>Library App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     {% block head %}{% endblock %}
 </head>
 <body>
-    {% block body %}{% endblock %}
+
+    <nav class="navbar">
+        <a href="{{ url_for('index') }}">Home</a>
+        <a href="{{ url_for('find_item') }}">Find</a>
+        <a href="{{ url_for('donate_item') }}">Donate</a>
+        <a href="{{ url_for('return_item') }}">Return</a>
+    </nav>
+
+    <main>
+        {% block body %}{% endblock %}
+    </main>
+
 </body>
 </html>
