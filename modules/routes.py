@@ -6,22 +6,6 @@ import sqlite3
 
 def init_routes(app):
 
-    
-    # Utility Methods
-
-    def get_row_count(tableName):
-        conn = sqlite3.connect('library.db')
-        cur = conn.cursor()
-        cur.execute(f'''
-            SELECT COUNT(*)
-            FROM {tableName}
-        ''')
-        user_amnt = cur.fetchone()[0]
-        conn.close()
-        return user_amnt
-    
-    # ----------------------------
-
     @app.route('/')
     def index():
         return render_template('index.html', template_folder='../templates')
@@ -61,7 +45,6 @@ def init_routes(app):
 
         return render_template('find.html', results=results, search_query=search_query, message=request.args.get('message'))
 
-    
     @app.route('/borrow', methods=['POST'])
     def borrow_item():
         item_id = request.form['item_id']
@@ -99,20 +82,6 @@ def init_routes(app):
 
             conn = sqlite3.connect('library.db')
             cur = conn.cursor()
-            cur.execute('''
-                SELECT li.item_id, li.title, li.available_copies,
-                    pb.ISBN, pb.publisher, pb.author
-                FROM LibraryItems li
-                LEFT JOIN PrintBooks pb ON li.item_id = pb.item_id
-                WHERE li.title LIKE ?
-            ''', (f'%{search_query}%',))
-            results = cur.fetchall()
-            conn.close()
-        return render_template('find.html', results=results)
-
-    @app.route('/index', methods=['GET', 'POST'])
-    def volunteer():
-        pass
 
             # If the user clicked "Return"
             if item_id:
@@ -191,38 +160,47 @@ def init_routes(app):
 
         return render_template('donate.html', message=message)
 
-
     @app.route('/findEvent', methods=['GET', 'POST'])
     def find_event():
-        eventResults = []
+        search_query = ''
+        conn = sqlite3.connect('library.db')
+        cur = conn.cursor()
         if request.method == 'POST':
             search_query = request.form['title']
-            conn = sqlite3.connect('library.db')
-            cur = conn.cursor()
-            cur.execute('''
-                SELECT *
-                FROM LibraryEvents le
-                WHERE le.title LIKE ?
-            ''', (f'%{search_query}%',))
-            eventResults = cur.fetchall()
-            conn.close()
-        return render_template('findEvent.html', eventResults=eventResults)
+
+        query = ('''
+            SELECT *
+            FROM LibraryEvents le
+        ''')
+
+        params = ()
+        if search_query:
+            query += ' WHERE le.title LIKE ?'
+            params = (f'%{search_query}%',)
+
+        cur.execute(query, params)
+        eventResults = cur.fetchall()
+        conn.close()
+        return render_template('findEvent.html', eventResults=eventResults,search_query=search_query, message=request.args.get('message'))
 
     @app.route('/registerEvent', methods=['GET', 'POST'])
     def register_event():
-        # we get the user to fill in their information on the html form
-        # this information will be inserted and then they can select an event to register for (we will fill in the registered table)
-         if request.method == 'POST':
-            search_query = request.form['title']
-            conn = sqlite3.connect('library.db')
-            user = (get_row_count(LibraryUsers) + 1,request.form['name'],request.form['email'],request.form['phone'])
-            cur = conn.cursor()
-        
-            cur.execute('''
-                INSERT INTO LibraryUsers (user_id, name, email, phone_number) VALUES (?, ?, ?, ?)"
-            ''',user)
-            conn.close()
-            return
+        conn = sqlite3.connect('library.db')
+        cur = conn.cursor()
+
+        user_id = request.form['user_id']
+        event_id = request.form['event_id']
+
+        # insert the User into the event. 
+        cur.execute('''
+            INSERT INTO Attend (event_id, user_id) 
+            VALUES (?, ?)
+        ''', (event_id, user_id))
+
+        conn.commit()
+        conn.close()
+
+        return redirect(url_for(f'find_event', message='You Have Succesfully Registered for the event!{}'))
 
     # ask_librarian and volunteer will be popups on the the homepage. 
     @app.route('/index', methods=['GET', 'POST'])
