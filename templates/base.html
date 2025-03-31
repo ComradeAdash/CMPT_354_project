@@ -8,13 +8,15 @@
 </head>
 <body>
 
-    <nav class="navbar">
-        <a href="{{ url_for('index') }}">Home</a>
-        <a href="{{ url_for('find_item') }}">Find</a>
-        <a href="{{ url_for('donate_item') }}">Donate</a>
-        <a href="{{ url_for('return_item') }}">Return</a>
-        <a href="{{ url_for('find_event') }}">Library Events</a>
-    </nav>
+    {% if request.path not in ['/', '/register'] %}
+        <nav class="navbar">
+            <a href="{{ url_for('index') }}">Home</a>
+            <a href="{{ url_for('find_item') }}">Find</a>
+            <a href="{{ url_for('donate_item') }}">Donate</a>
+            <a href="{{ url_for('return_item') }}">Return</a>
+            <a href="{{ url_for('find_event') }}">Library Events</a>
+        </nav>
+    {% endif %}
 
     <main>
         {% block body %}{% endblock %}

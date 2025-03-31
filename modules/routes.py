@@ -1,15 +1,72 @@
 # ----------------------------
 # Query logic & Requests
 # ----------------------------
-from flask import Flask, render_template, url_for, request, redirect
+from flask import Flask, render_template, url_for, request, redirect, make_response
 import sqlite3
-
+USER_ID = 0
+ 
 def init_routes(app):
 
-    @app.route('/')
+    # handles user logins, redirects to the homepage after a succesful login
+    @app.route('/', methods=['GET', 'POST'])
+    def login():
+        print("Hello")
+
+        results = []
+        if request.method == 'POST':
+            name = request.form['name']
+            user_id = request.form['user_id']
+            print(name)
+
+            conn = sqlite3.connect('library.db')
+            cur = conn.cursor()
+
+            cur.execute('''
+                SELECT * FROM LibraryUsers lu WHERE (lu.user_id = ?) AND (lu.name = ?)
+            ''',(user_id,name))
+            results = cur.fetchall()
+
+            if results:
+                # The user exists, we can safely login
+                print("user found")
+                # everytime we login, the global UserId is reset for the application. 
+                USER_ID = user_id
+                print("USER_ID is:" + USER_ID)
+                resp = make_response(redirect(url_for('index')))
+                conn.commit()
+                conn.close()
+                return resp  
+
+        return render_template('login.html', template_folder='../templates')
+
+    # homepage, contains navigation for all library services
+    @app.route('/home')
     def index():
         return render_template('index.html', template_folder='../templates')
-    
+   
+    # users who don't have an account can create one, before getting access to the library features. 
+    @app.route('/register', methods=['GET', 'POST'])
+    def register():
+        if request.method == 'POST':
+            conn = sqlite3.connect('library.db')
+            cur = conn.cursor()
+            email = request.form['email']
+            name = request.form['name']
+            phone_num = request.form['phone']
+
+            cur.execute('''
+                INSERT INTO LibraryUsers (name,email,phone_number) VALUES (?, ?, ?);
+            ''',(name,email,phone_num))
+            user_id = cur.lastrowid
+            conn.commit()
+            conn.close()
+            
+            return render_template('register.html', success=True, template_folder='../templates', message=f"{user_id}")
+
+        return render_template('register.html', success=False, template_folder='../templates')
+
+
+    # filtering and searching through library items
     @app.route('/find', methods=['GET', 'POST'])
     def find_item():
         search_query = ''
@@ -45,6 +102,7 @@ def init_routes(app):
 
         return render_template('find.html', results=results, search_query=search_query, message=request.args.get('message'))
 
+    # query logic for borrowing an item
     @app.route('/borrow', methods=['POST'])
     def borrow_item():
         item_id = request.form['item_id']
@@ -70,6 +128,7 @@ def init_routes(app):
 
         return redirect(url_for('find_item', message='Item borrowed successfully!'))
     
+    # query logic for returning an item
     @app.route('/return', methods=['GET', 'POST'])
     def return_item():
         message = ''
@@ -110,8 +169,8 @@ def init_routes(app):
             conn.close()
 
         return render_template('return.html', message=message, borrowed_items=borrowed_items, user_id=user_id)
-
-
+      
+    # query logic for making a donation
     @app.route('/donate', methods=['GET', 'POST'])
     def donate_item():
         message = ''
@@ -160,6 +219,7 @@ def init_routes(app):
 
         return render_template('donate.html', message=message)
 
+    # filtering and searching through events
     @app.route('/findEvent', methods=['GET', 'POST'])
     def find_event():
         search_query = ''
@@ -182,7 +242,8 @@ def init_routes(app):
         eventResults = cur.fetchall()
         conn.close()
         return render_template('findEvent.html', eventResults=eventResults,search_query=search_query, message=request.args.get('message'))
-
+        
+    # query logic for registering for an event
     @app.route('/registerEvent', methods=['GET', 'POST'])
     def register_event():
         conn = sqlite3.connect('library.db')
@@ -202,7 +263,7 @@ def init_routes(app):
 
         return redirect(url_for(f'find_event', message='You Have Succesfully Registered for the event!{}'))
 
-    # query the personnel for any librarians, and submit a help ticket to be processed. 
+    # query logic for librarian help, getting help requests etc. 
     @app.route('/ask', methods=['GET', 'POST'])
     def ask_librarian():
         pass
