@@ -43,7 +43,11 @@ def get_db_connection():
     # Volunteer
     cur.execute('''
     CREATE TABLE IF NOT EXISTS Volunteer (
-        volunteer_id INTEGER PRIMARY KEY
+        volunteer_id INTEGER PRIMARY KEY,
+        event_id INTEGER,
+        user_id INTEGER,
+        FOREIGN KEY (event_id) REFERENCES LibraryEvents(event_id),
+        FOREIGN KEY (user_id) REFERENCES LibraryUsers(user_id)
     );
     ''')
 
