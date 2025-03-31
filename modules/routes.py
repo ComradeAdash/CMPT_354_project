@@ -202,7 +202,7 @@ def init_routes(app):
 
         return redirect(url_for(f'find_event', message='You Have Succesfully Registered for the event!{}'))
 
-    # ask_librarian and volunteer will be popups on the the homepage. 
-    @app.route('/index', methods=['GET', 'POST'])
+    # query the personnel for any librarians, and submit a help ticket to be processed. 
+    @app.route('/ask', methods=['GET', 'POST'])
     def ask_librarian():
         pass
