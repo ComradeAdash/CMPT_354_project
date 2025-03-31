@@ -19,13 +19,13 @@ def get_db_connection():
         phone_number TEXT
     );
     ''')
-
+    
     # Personnel
     cur.execute('''
     CREATE TABLE IF NOT EXISTS Personnel (
         personnel_ID INTEGER PRIMARY KEY,
         name TEXT NOT NULL,
-        role TEXT
+        role TEXT CHECK(role IN ('Manager', 'Librarian', 'IT'))
     );
     ''')
 

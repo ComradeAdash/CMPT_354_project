@@ -3,8 +3,7 @@
 # ----------------------------
 from flask import Flask, render_template, url_for, request, redirect, make_response
 import sqlite3
-USER_ID = 0
- 
+
 def init_routes(app):
 
     # handles user logins, redirects to the homepage after a succesful login
@@ -29,8 +28,6 @@ def init_routes(app):
             if results:
                 # The user exists, we can safely login
                 print("user found")
-                # everytime we login, the global UserId is reset for the application. 
-                USER_ID = user_id
                 print("USER_ID is:" + USER_ID)
                 resp = make_response(redirect(url_for('index')))
                 conn.commit()
@@ -264,6 +261,31 @@ def init_routes(app):
         return redirect(url_for(f'find_event', message='You Have Succesfully Registered for the event!{}'))
 
     # query logic for librarian help, getting help requests etc. 
-    @app.route('/ask', methods=['GET', 'POST'])
+    @app.route('/help', methods=['GET', 'POST'])
     def ask_librarian():
-        pass
+        message = ''
+        conn = sqlite3.connect('library.db')
+        cur = conn.cursor()
+        if request.method == 'POST':
+            user_id = request.form['user_id']
+            text_info = request.form['text_info']
+            print(user_id)
+            print(text_info)
+            
+            # we query the personnel for users who are librarians, then we insert a random one to help with the ticket. 
+            cur.execute('''
+                SELECT * FROM Personnel p WHERE (p.role = "Librarian") ORDER BY RANDOM() LIMIT 1
+            ''')
+            personnel = cur.fetchone()
+            personnel_id = personnel[0]
+            personnel_name = personnel[1]
+            print(f"Lbrarian {personnel_name} with ID:{personnel_id}\n")
+
+            cur.execute('''
+                INSERT INTO SupportTickets (personnel_ID,user_id,text_info) VALUES (?, ?, ?);
+            ''',(personnel_id, user_id,text_info,))
+
+            conn.commit()
+            conn.close()
+
+        return render_template('help.html')
