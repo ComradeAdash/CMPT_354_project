@@ -251,5 +251,17 @@ def get_db_connection():
     );
     ''')
 
+    # User Support Tickets
+    cur.execute('''
+    CREATE TABLE IF NOT EXISTS SupportTickets(
+        ticket_id INTEGER PRIMARY KEY,
+        personnel_ID INTEGER,
+        user_id INTEGER,
+        text_info TEXT NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES LibraryUsers(user_id),
+        FOREIGN KEY (personnel_ID) REFERENCES Personnel(personnel_ID)
+    );
+    ''')
+
     conn.commit()
     return conn
