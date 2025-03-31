@@ -28,7 +28,6 @@ def init_routes(app):
             if results:
                 # The user exists, we can safely login
                 print("user found")
-                print("USER_ID is:" + USER_ID)
                 resp = make_response(redirect(url_for('index')))
                 conn.commit()
                 conn.close()
