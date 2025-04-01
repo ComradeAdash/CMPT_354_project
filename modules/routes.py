@@ -134,8 +134,15 @@ def init_routes(app):
                 isbn = request.form.get('isbn')
                 publisher = request.form.get('publisher')
                 author = request.form.get('author')
-                cur.execute('INSERT INTO PrintBooks (item_id, ISBN, publisher, author) VALUES (?, ?, ?, ?)', 
-                            (item_id, isbn, publisher, author))
+
+                # 1. Insert into BookMetadata (ignore if ISBN already exists)
+                cur.execute('''
+                    INSERT OR IGNORE INTO BookMetadata (ISBN, publisher, author)
+                    VALUES (?, ?, ?)
+                ''', (isbn, publisher, author))
+
+                # 2. Link item to ISBN
+                cur.execute('INSERT INTO PrintBooks (item_id, ISBN) VALUES (?, ?)', (item_id, isbn))
 
             elif item_type == 'Records':
                 format = request.form.get('format')
