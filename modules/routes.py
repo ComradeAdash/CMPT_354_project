@@ -258,6 +258,11 @@ def init_routes(app):
         conn.close()
 
         return redirect(url_for(f'find_event', message='You Have Succesfully Registered for the event!{}'))
+    
+    # query logic for registering for an event
+    @app.route('/volunteer', methods=['GET', 'POST'])
+    def volunteer_event():
+        pass
 
     # query logic for librarian help, getting help requests etc. 
     @app.route('/help', methods=['GET', 'POST'])

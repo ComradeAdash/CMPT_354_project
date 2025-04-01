@@ -23,16 +23,28 @@
                         Start Time: {{ item[5] }}<br>
                         End Time: {{ item[6] }}<br>
             
-                        <!-- Unique button for each event -->
-                        <button onclick="openForm('modal{{ item[0] }}')">Register For Event</button>
+                        <button onclick="openForm('register-modal{{ item[0] }}')">Register For Event</button>
             
-                        <!-- Unique modal for each event -->
-                        <div id="modal{{ item[0] }}" class="modal" style="display: none;">
+                        <div id="register-modal{{ item[0] }}" class="modal" style="display: none;">
                             <div class="modal-content">
-                                <span class="close" onclick="closeForm('modal{{ item[0] }}')">&times;</span>
+                                <span class="close" onclick="closeForm('register-modal{{ item[0] }}')">&times;</span>
                                 <h2>Register for {{ item[2] }}</h2>
                                 
                                 <form action="{{ url_for('register_event') }}" method="POST">
+                                    <input type="number" name="user_id" placeholder="Enter your User ID" required>
+                                    <input type="hidden" name="event_id" value="{{ item[0] }}">
+                                    <button type="submit">Submit</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <button onclick="openForm('volunteer-modal{{ item[0] }}')">Volunteer Now</button>
+                        <div id="volunteer-modal{{ item[0] }}" class="modal" style="display: none;">
+                            <div class="modal-content">
+                                <span class="close" onclick="closeForm('volunteer-modal{{ item[0] }}')">&times;</span>
+                                <h2>Volunteer for {{ item[2] }}</h2>
+                                
+                                <form action="{{ url_for('volunteer_event') }}" method="POST">
                                     <input type="number" name="user_id" placeholder="Enter your User ID" required>
                                     <input type="hidden" name="event_id" value="{{ item[0] }}">
                                     <button type="submit">Submit</button>
