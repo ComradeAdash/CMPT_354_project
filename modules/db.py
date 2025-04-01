@@ -67,14 +67,22 @@ def get_db_connection():
     );
     ''')
 
-    # Print Books
+    # BookMetadata stores publisher/author info per ISBN
+    cur.execute('''
+    CREATE TABLE IF NOT EXISTS BookMetadata (
+        ISBN TEXT PRIMARY KEY,
+        publisher TEXT,
+        author TEXT
+    );
+    ''')
+
+    # PrintBooks just links item_id to ISBN
     cur.execute('''
     CREATE TABLE IF NOT EXISTS PrintBooks (
         item_id INTEGER PRIMARY KEY,
         ISBN TEXT,
-        publisher TEXT,
-        author TEXT,
-        FOREIGN KEY (item_id) REFERENCES LibraryItems(item_id)
+        FOREIGN KEY (item_id) REFERENCES LibraryItems(item_id),
+        FOREIGN KEY (ISBN) REFERENCES BookMetadata(ISBN)
     );
     ''')
 
@@ -211,15 +219,18 @@ def get_db_connection():
     );
     ''')
 
-    # Registered
+    # Registered (BCNF-compliant)
     cur.execute('''
     CREATE TABLE IF NOT EXISTS Registered (
         event_id INTEGER,
-        location TEXT,
-        PRIMARY KEY (event_id, location),
-        FOREIGN KEY (event_id) REFERENCES LibraryEvents(event_id)
+        volunteer_id INTEGER,
+        PRIMARY KEY (event_id, volunteer_id),
+        FOREIGN KEY (event_id) REFERENCES LibraryEvents(event_id),
+        FOREIGN KEY (volunteer_id) REFERENCES Volunteer(volunteer_id)
     );
     ''')
+
+
 
     # ========== ROOMS ==========
 

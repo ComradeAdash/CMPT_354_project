@@ -20,13 +20,14 @@ def init_routes(app):
 
         query = '''
             SELECT li.item_id, li.title, li.available_copies,
-                pb.ISBN, pb.publisher, pb.author,
+                pb.ISBN, bm.publisher, bm.author,
                 r.format, r.artist,
                 m.ISSN,
                 ob.ISBN,
                 cd.genre
             FROM LibraryItems li
             LEFT JOIN PrintBooks pb ON li.item_id = pb.item_id
+            LEFT JOIN BookMetadata bm ON pb.ISBN = bm.ISBN
             LEFT JOIN Records r ON li.item_id = r.item_id
             LEFT JOIN Magazines m ON li.item_id = m.item_id
             LEFT JOIN OnlineBooks ob ON li.item_id = ob.item_id
@@ -43,6 +44,7 @@ def init_routes(app):
         conn.close()
 
         return render_template('find.html', results=results, search_query=search_query, message=request.args.get('message'))
+
 
     
     @app.route('/borrow', methods=['POST'])
