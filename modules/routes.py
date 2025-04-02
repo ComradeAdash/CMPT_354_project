@@ -75,10 +75,11 @@ def init_routes(app):
         query = '''
             SELECT li.item_id, li.title, li.available_copies,
                 pb.ISBN, bm.publisher, bm.author,
-                mm1.format AS record_format, mm1.artist AS record_artist,
+                COALESCE(mm1.format, mm2.format) AS format,
+                COALESCE(mm1.artist, mm2.artist) AS artist,
                 m.ISSN,
                 ob.ISBN AS ob_ISBN, ob.url,
-                mm2.genre AS cd_genre
+                COALESCE(mm2.genre, mm1.genre) AS genre
             FROM LibraryItems li
             LEFT JOIN PrintBooks pb ON li.item_id = pb.item_id
             LEFT JOIN BookMetadata bm ON pb.ISBN = bm.ISBN
@@ -89,6 +90,7 @@ def init_routes(app):
             LEFT JOIN CDs cd ON li.item_id = cd.item_id
             LEFT JOIN MediaMetadata mm2 ON cd.media_id = mm2.media_id
         '''
+
 
         params = ()
         if search_query:
