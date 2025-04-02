@@ -252,25 +252,39 @@ def init_routes(app):
     def register_event():
         conn = sqlite3.connect('library.db')
         cur = conn.cursor()
+        if request.method == 'POST':
+            user_id = request.form['user_id']
+            event_id = request.form['event_id']
 
-        user_id = request.form['user_id']
-        event_id = request.form['event_id']
+            # insert the User into the event. 
+            cur.execute('''
+                INSERT INTO Attend (event_id, user_id) 
+                VALUES (?, ?)
+            ''', (event_id, user_id))
 
-        # insert the User into the event. 
-        cur.execute('''
-            INSERT INTO Attend (event_id, user_id) 
-            VALUES (?, ?)
-        ''', (event_id, user_id))
-
-        conn.commit()
-        conn.close()
+            conn.commit()
+            conn.close()
 
         return redirect(url_for(f'find_event', message='You Have Succesfully Registered for the event!{}'))
     
-    # query logic for registering for an event
+    # query logic for volunteering for an event
     @app.route('/volunteer', methods=['GET', 'POST'])
     def volunteer_event():
-        pass
+        conn = sqlite3.connect('library.db')
+        cur = conn.cursor()
+        if request.method == 'POST':
+            user_id = request.form['user_id']
+            event_id = request.form['event_id']
+            print(user_id)
+            print(event_id)
+            cur.execute('''
+                INSERT INTO Volunteer (event_id,user_id) VALUES (?,?);
+            ''',(event_id,user_id,))
+
+            conn.commit()
+            conn.close()
+
+        return redirect(url_for(f'find_event', message='You Have Successfully Volunteered to help for the event!{}'))
 
     # query logic for librarian help, getting help requests etc. 
     @app.route('/help', methods=['GET', 'POST'])
