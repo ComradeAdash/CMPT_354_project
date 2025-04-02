@@ -12,7 +12,7 @@ $ pip install virtualenv
 $ virtualenv env
 ```
 
-3. Then run the command:
+3. Then run the command: (Note -  ensure your terminal wimndow, powershell etc ,has permissions for script executions enabled.)
 ```
 $ source ./env/bin/activate
 ```
