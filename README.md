@@ -16,6 +16,10 @@ $ virtualenv env
 ```
 $ source ./env/bin/activate
 ```
+or
+```
+$ .\env\Scripts\activate
+```
 
 4. Then install the dependencies:
 ```
@@ -30,7 +34,7 @@ $ python setup_db.py
 $ python seed_data.py
 ```
 
-7. Reset the database
+6. Reset the database
 ```
 $ python reset_db.py
 ```
