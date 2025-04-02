@@ -18,8 +18,64 @@ def seed():
         (8, 'Hannah Patel', 'hannah@example.com', '604-888-9999'),
         (9, 'Ivan Tran', 'ivan@example.com', '604-999-0000'),
         (10, 'Jade Singh', 'jade@example.com', '604-000-1111'),
+        (11, 'Kevin Brown', 'kevin@example.com', '604-111-3333'),
+        (12, 'Laura Green', 'laura@example.com', '604-222-4444'),
+        (13, 'Mike Davis', 'mike@example.com', '604-333-5555'),
+        (14, 'Nina White', 'nina@example.com', '604-444-6666'),
+        (15, 'Oliver Scott', 'oliver@example.com', '604-555-7777'),
+        (16, 'Paula Martinez', 'paula@example.com', '604-666-8888'),
+        (17, 'Quinn Nelson', 'quinn@example.com', '604-777-9999'),
+        (18, 'Rachel Adams', 'rachel@example.com', '604-888-0000'),
+        (19, 'Samuel Carter', 'samuel@example.com', '604-999-1111'),
+        (20, 'Tina Evans', 'tina@example.com', '604-000-2222'),
+        (21, 'Umar Wilson', 'umar@example.com', '604-111-4444'),
+        (22, 'Vera Lopez', 'vera@example.com', '604-222-5555'),
+        (23, 'William Harris', 'william@example.com', '604-333-6666'),
+        (24, 'Xander Thomas', 'xander@example.com', '604-444-7777'),
+        (25, 'Yasmine King', 'yasmine@example.com', '604-555-8888'),
+        (26, 'Zachary Hall', 'zachary@example.com', '604-666-9999'),
+        (27, 'Amy Turner', 'amy@example.com', '604-777-0000'),
+        (28, 'Bryan Parker', 'bryan@example.com', '604-888-1111'),
+        (29, 'Chloe Bennett', 'chloe@example.com', '604-999-2222'),
+        (30, 'Derek Foster', 'derek@example.com', '604-000-3333')
     ]
     cur.executemany("INSERT INTO LibraryUsers VALUES (?, ?, ?, ?);", users)
+
+    # ---------------------
+    # Seed Personnel
+    # ---------------------
+
+    personnel = [
+        (1, 'Umar Wilson', 'Manager'), 
+        (2, 'Vera Lopez', 'Librarian'),
+        (3, 'William Harris', 'IT'),
+        (4, 'Xander Thomas', 'Librarian'),
+        (5, 'Yasmine King', 'IT'),
+        (6, 'Zachary Hall', 'Librarian'),
+        (7, 'Amy Turner', 'IT'),
+        (8, 'Bryan Parker', 'Librarian'),
+        (9, 'Chloe Bennett', 'IT'),
+        (10, 'Derek Foster', 'Librarian')
+    ]
+    cur.executemany("INSERT INTO Personnel VALUES (?, ?, ?);", personnel)
+
+    # ---------------------
+    # WorksFor
+    # ---------------------
+
+    worksFor = [
+        (1, 1),  
+        (2, 2),  
+        (3, 3),  
+        (4, 4),  
+        (5, 5),  
+        (6, 6),  
+        (7, 7),  
+        (8, 8),  
+        (9, 9), 
+        (10, 10) 
+    ]
+    cur.executemany("INSERT INTO WorksFor VALUES (?, ?);", worksFor)
 
     # ---------------------
     # Seed LibraryItems

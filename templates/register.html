@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block head %}
+  <title>Register</title>
+{% endblock %}
+
+{% block body %}
+  <div class="register-container">
+    <h2>Create Account</h2>
+
+    <!-- Registration Form -->
+    <form method="POST" action="/register">
+      <div class="form-group">
+        <label for="Name">Name:</label>
+        <input type="text" id="name" name="name" required>
+      </div>
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+      </div>
+      <div class="form-group">
+        <label for="phone">Phone Number:</label>
+        <input type="text" id="phone" name="phone" pattern="\d{3}-\d{3}-\d{4}" required placeholder="604-999-9999">
+      </div>
+      <button type="submit">Create Account</button>
+    </form>
+
+    {% if success %}
+      <div class="success-message">
+        <h3>Registration Successful!</h3>
+        <p>You can now close this page.</p>
+        <P> Your userID is: {{ message }} </P>
+      </div>
+    {% endif %}
+
+    {% if error %}
+      <div class="error-message">
+        <p>{{ error }}</p>
+      </div>
+    {% endif %}
+    
+    <a href="\">Already have an account?</a>
+  </div>
+{% endblock %}

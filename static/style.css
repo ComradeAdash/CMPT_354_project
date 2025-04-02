@@ -56,6 +56,52 @@ em {
     color: gray;
 }
 
+/*
+---------------------------------
+Event Registration Form Style
+---------------------------------
+*/
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Modal content */
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    width: 50%;
+    margin: 10% auto;
+    text-align: center;
+    position: relative;
+}
+
+/* Close button */
+.close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+input, #openEventForm {
+    margin: 10px;
+    padding: 8px;
+    width: 80%;
+}
+
+/*
+---------------------------------
+*/
 .card {
     background: white;
     padding: 1rem;
@@ -112,4 +158,20 @@ em {
 main {
     max-width: 800px;
     margin: auto;
+}
+
+.main-container {
+    padding:5%;
+    display: flex;
+    justify-content: center; 
+    gap: 20px; 
+}
+
+.container{
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 600px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
 }

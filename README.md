@@ -15,14 +15,27 @@ $ virtualenv env
 3. Then run the command:
 ```
 $ source ./env/bin/activate
-
 ```
+
 4. Then install the dependencies:
 ```
 $ (env) pip install -r requirements.txt
 ```
 
-5. To run the app, run the command:
+5. Generate Tuples (If there is no existing .db file)
+```
+$ python setup_db.py
+```
+```
+$ python seed_data.py
+```
+
+7. Reset the database
+```
+$ python reset_db.py
+```
+
+6. To run the app, run the command:
 ```
 $ python app.py
 ```

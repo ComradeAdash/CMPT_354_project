@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <h1>Find a Library Event</h1>
+{% endblock %}
+
+{% block body %}
+    <form method="POST">
+        <label for="title">Search by Event Title:</label>
+        <input type="text" id="title" name="title" required>
+        <button type="submit">Search</button>
+    </form>
+
+    {% if eventResults %}
+        <h2>Search Results:</h2>
+        <ul>
+            {% for item in eventResults %}
+                <li>
+                    <strong>{{ item[2] }}</strong> — {{ item[1] }} (ID: {{ item[0] }})<br>
+                    {% if item[3] %}
+                        Audience: {{ item[3] }}<br>
+                        Date: {{ item[4] }}<br>
+                        Start Time: {{ item[5] }}<br>
+                        End Time: {{ item[6] }}<br>
+            
+                        <button onclick="openForm('register-modal{{ item[0] }}')">Register For Event</button>
+            
+                        <div id="register-modal{{ item[0] }}" class="modal" style="display: none;">
+                            <div class="modal-content">
+                                <span class="close" onclick="closeForm('register-modal{{ item[0] }}')">&times;</span>
+                                <h2>Register for {{ item[2] }}</h2>
+                                
+                                <form action="{{ url_for('register_event') }}" method="POST">
+                                    <input type="number" name="user_id" placeholder="Enter your User ID" required>
+                                    <input type="hidden" name="event_id" value="{{ item[0] }}">
+                                    <button type="submit">Submit</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <button onclick="openForm('volunteer-modal{{ item[0] }}')">Volunteer Now</button>
+                        <div id="volunteer-modal{{ item[0] }}" class="modal" style="display: none;">
+                            <div class="modal-content">
+                                <span class="close" onclick="closeForm('volunteer-modal{{ item[0] }}')">&times;</span>
+                                <h2>Volunteer for {{ item[2] }}</h2>
+                                
+                                <form action="{{ url_for('volunteer_event') }}" method="POST">
+                                    <input type="number" name="user_id" placeholder="Enter your User ID" required>
+                                    <input type="hidden" name="event_id" value="{{ item[0] }}">
+                                    <button type="submit">Submit</button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endif %}
+                </li><br>
+            {% endfor %}
+        <script>
+            function openForm(modalId) {
+                document.getElementById(modalId).style.display = "block";
+            }
+        
+            function closeForm(modalId) {
+                document.getElementById(modalId).style.display = "none";
+            }
+        </script>
+        </ul>
+    {% elif request.method == 'POST' %}
+        <p>No results found.</p>
+    {% endif %}
+{% endblock %}

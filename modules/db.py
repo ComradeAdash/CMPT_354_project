@@ -19,13 +19,13 @@ def get_db_connection():
         phone_number TEXT
     );
     ''')
-
+    
     # Personnel
     cur.execute('''
     CREATE TABLE IF NOT EXISTS Personnel (
         personnel_ID INTEGER PRIMARY KEY,
         name TEXT NOT NULL,
-        role TEXT
+        role TEXT CHECK(role IN ('Manager', 'Librarian', 'IT'))
     );
     ''')
 
@@ -43,7 +43,11 @@ def get_db_connection():
     # Volunteer
     cur.execute('''
     CREATE TABLE IF NOT EXISTS Volunteer (
-        volunteer_id INTEGER PRIMARY KEY
+        volunteer_id INTEGER PRIMARY KEY,
+        event_id INTEGER,
+        user_id INTEGER,
+        FOREIGN KEY (event_id) REFERENCES LibraryEvents(event_id),
+        FOREIGN KEY (user_id) REFERENCES LibraryUsers(user_id)
     );
     ''')
 
@@ -259,6 +263,18 @@ def get_db_connection():
         PRIMARY KEY (room_id, event_id),
         FOREIGN KEY (room_id) REFERENCES Rooms(room_id),
         FOREIGN KEY (event_id) REFERENCES LibraryEvents(event_id)
+    );
+    ''')
+
+    # User Support Tickets
+    cur.execute('''
+    CREATE TABLE IF NOT EXISTS SupportTickets(
+        ticket_id INTEGER PRIMARY KEY,
+        personnel_ID INTEGER,
+        user_id INTEGER,
+        text_info TEXT NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES LibraryUsers(user_id),
+        FOREIGN KEY (personnel_ID) REFERENCES Personnel(personnel_ID)
     );
     ''')
 
