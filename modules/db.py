@@ -292,5 +292,42 @@ def get_db_connection():
     );
     ''')
 
+    # Triggers 
+
+    # ensure we cant borrow books that have no available copies
+    cur.execute('''
+        CREATE TRIGGER StopBorrow
+        BEFORE INSERT ON Borrow
+        FOR EACH ROW
+        WHEN (SELECT available_copies FROM LibraryItems WHERE item_id = NEW.item_id) <= 0
+        BEGIN
+            SELECT RAISE(ABORT, 'No available copies');
+        END;
+    ''')
+
+    # Update available copies for borrowing
+    cur.execute('''
+        CREATE TRIGGER AvailablePlus
+        AFTER INSERT ON Borrow
+        FOR EACH ROW
+        BEGIN
+            UPDATE LibraryItems
+            SET available_copies = available_copies - 1
+            WHERE (item_id = NEW.item_id);
+        END;
+    ''')
+
+    # Update available copies for returning
+    cur.execute('''
+        CREATE TRIGGER AvailableMinus
+        BEFORE DELETE ON Borrow
+        FOR EACH ROW
+        BEGIN
+            UPDATE LibraryItems
+            SET available_copies = available_copies + 1
+            WHERE item_id = OLD.item_id;
+        END;
+    ''')
+
     conn.commit()
     return conn

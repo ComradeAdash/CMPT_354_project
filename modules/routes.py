@@ -106,25 +106,30 @@ def init_routes(app):
     # query logic for borrowing an item
     @app.route('/borrow', methods=['POST'])
     def borrow_item():
-        item_id = request.form['item_id']
-        user_id = request.form['user_id']
+        try:
+            item_id = request.form['item_id']
+            user_id = request.form['user_id']
 
-        conn = sqlite3.connect('library.db')
-        cur = conn.cursor()
+            conn = sqlite3.connect('library.db')
+            cur = conn.cursor()
 
-        cur.execute('''
-            INSERT INTO Borrow (item_id, user_id, borrow_status, due_date, fine_amnt)
-            VALUES (?, ?, 'borrowed', date('now', '+14 days'), 0)
-        ''', (item_id, user_id))
+            cur.execute('''
+                INSERT INTO Borrow (item_id, user_id, borrow_status, due_date, fine_amnt)
+                VALUES (?, ?, 'borrowed', date('now', '+14 days'), 0)
+            ''', (item_id, user_id))
 
-        cur.execute('''
-            UPDATE LibraryItems SET available_copies = available_copies - 1
-            WHERE item_id = ? AND available_copies > 0
-        ''', (item_id,))
+            # cur.execute('''
+            #     UPDATE LibraryItems SET available_copies = available_copies - 1
+            #     WHERE item_id = ? AND available_copies > 0
+            # ''', (item_id,)
+
+        except sqlite3.IntegrityError as e:
+            print(f"Integrity Error: {e}")
+            return redirect(url_for('find_item', message='There are no Copies Available Sorry!'))
 
         conn.commit()
         conn.close()
-
+        
         return redirect(url_for('find_item', message='Item borrowed successfully!'))
     
     # query logic for returning an item
@@ -156,7 +161,7 @@ def init_routes(app):
                             LIMIT 1
                         )
                     ''', (user_id, item_id))
-                    cur.execute('UPDATE LibraryItems SET available_copies = available_copies + 1 WHERE item_id = ?', (item_id,))
+                    # cur.execute('UPDATE LibraryItems SET available_copies = available_copies + 1 WHERE item_id = ?', (item_id,))
                     conn.commit()
                     message = 'Item returned successfully!'
                 else:
