@@ -26,17 +26,9 @@ $ .\env\Scripts\activate
 $ (env) pip install -r requirements.txt
 ```
 
-5. Generate Tuples (If there is no existing .db file)
+5. Generate Tuples: if an old library.db exists, setup_db.py deletes it and refreshes the tuples for ease of use and testing.
 ```
 $ python setup_db.py
-```
-```
-$ python seed_data.py
-```
-
-6. Reset the database
-```
-$ python reset_db.py
 ```
 
 6. To run the app, run the command:
