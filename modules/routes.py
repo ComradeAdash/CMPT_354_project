@@ -99,12 +99,7 @@ def init_routes(app):
 
         return render_template('find.html', results=results, search_query=search_query, message=request.args.get('message'))
 
-<<<<<<< HEAD
     # query logic for borrowing an item
-=======
-
-    
->>>>>>> 157afe24bf912fff8c859dbeae2a8167c41526cc
     @app.route('/borrow', methods=['POST'])
     def borrow_item():
         item_id = request.form['item_id']
@@ -227,7 +222,6 @@ def init_routes(app):
             message = f'Thank you for donating "{title}"!'
 
         return render_template('donate.html', message=message)
-<<<<<<< HEAD
 
     # filtering and searching through events
     @app.route('/findEvent', methods=['GET', 'POST'])
@@ -307,5 +301,3 @@ def init_routes(app):
             conn.close()
 
         return render_template('help.html')
-=======
->>>>>>> 157afe24bf912fff8c859dbeae2a8167c41526cc
