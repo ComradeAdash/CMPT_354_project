@@ -95,7 +95,7 @@ def seed():
     cur.executemany("INSERT INTO LibraryItems VALUES (?, ?, ?);", items)
 
     # ---------------------
-    # Seed BookMetadata (new BCNF)
+    # Seed BookMetadata
     # ---------------------
     book_metadata = [
         ('978-1-11111-111-1', 'O’Reilly', 'Tom White'),
@@ -103,30 +103,62 @@ def seed():
         ('978-1-33333-333-3', 'Springer', 'John Doe'),
         ('978-1-44444-444-4', 'No Starch', 'Alice Kim'),
         ('978-1-55555-555-5', 'MIT Press', 'Jane Park'),
-        ('978-1-66666-666-6', 'O’Reilly', 'Lucas Tan'),
-        ('978-1-77777-777-7', 'Penguin', 'Mei Lin'),
-        ('978-1-88888-888-8', 'Wiley', 'Derek Sun'),
-        ('978-1-99999-999-9', 'Springer', 'Nora Hall'),
-        ('978-1-10101-010-1', 'O’Reilly', 'George King')
     ]
     cur.executemany("INSERT INTO BookMetadata VALUES (?, ?, ?);", book_metadata)
 
     # ---------------------
-    # Seed PrintBooks (BCNF-compliant version)
+    # Seed PrintBooks
     # ---------------------
     print_books = [
         (1, '978-1-11111-111-1'),
         (2, '978-1-22222-222-2'),
         (3, '978-1-33333-333-3'),
         (4, '978-1-44444-444-4'),
-        (5, '978-1-55555-555-5'),
-        (6, '978-1-66666-666-6'),
-        (7, '978-1-77777-777-7'),
-        (8, '978-1-88888-888-8'),
-        (9, '978-1-99999-999-9'),
-        (10, '978-1-10101-010-1')
+        (5, '978-1-55555-555-5')
     ]
     cur.executemany("INSERT INTO PrintBooks VALUES (?, ?);", print_books)
+
+    # ---------------------
+    # Seed OnlineBooks
+    # ---------------------
+    online_books = [
+        (6, 'http://example.com/datast', '978-1-11111-111-1'),
+        (7, 'http://example.com/modernart', '978-1-22222-222-2')
+    ]
+    cur.executemany("INSERT INTO OnlineBooks (item_id, url, ISBN) VALUES (?, ?, ?);", online_books)
+
+    # ---------------------
+    # Seed Magazines
+    # ---------------------
+    magazines = [
+        (8, '1234-5678')
+    ]
+    cur.executemany("INSERT INTO Magazines VALUES (?, ?);", magazines)
+
+    # ---------------------
+    # Seed MediaMetadata (for CDs and Records)
+    # ---------------------
+    media_metadata = [
+        (1, 'Vinyl', 'Fleetwood Mac', 'Rock'),
+        (2, 'CD', 'Taylor Swift', 'Pop')
+    ]
+    cur.executemany("INSERT INTO MediaMetadata VALUES (?, ?, ?, ?);", media_metadata)
+
+    # ---------------------
+    # Seed Records
+    # ---------------------
+    records = [
+        (9, 1)
+    ]
+    cur.executemany("INSERT INTO Records VALUES (?, ?);", records)
+
+    # ---------------------
+    # Seed CDs
+    # ---------------------
+    cds = [
+        (10, 2)
+    ]
+    cur.executemany("INSERT INTO CDs (item_id, media_id) VALUES (?, ?);", cds)
 
     # ---------------------
     # Seed Borrow
@@ -151,32 +183,17 @@ def seed():
     events = [
         (1, 'Room 101', 'Book Club: AI', 'Adults', '2025-04-10', '18:00', '20:00'),
         (2, 'Room 102', 'Art Show', 'All Ages', '2025-04-12', '10:00', '15:00'),
-        (3, 'Room 103', 'Poetry Reading', 'Teens', '2025-04-15', '16:00', '18:00'),
-        (4, 'Room 104', 'Film Night', 'Adults', '2025-04-17', '19:00', '21:00'),
-        (5, 'Room 105', 'History Lecture', 'Seniors', '2025-04-20', '14:00', '16:00'),
-        (6, 'Room 106', 'Coding for Kids', 'Children', '2025-04-22', '13:00', '15:00'),
-        (7, 'Room 107', 'Music Jam', 'All Ages', '2025-04-24', '17:00', '19:00'),
-        (8, 'Room 108', 'Local Author Talk', 'Adults', '2025-04-26', '18:00', '19:30'),
-        (9, 'Room 109', 'Photography Basics', 'Teens', '2025-04-28', '16:30', '18:30'),
-        (10, 'Room 110', 'Kids Storytime', 'Children', '2025-04-30', '10:00', '11:00'),
+        (3, 'Room 103', 'Poetry Reading', 'Teens', '2025-04-15', '16:00', '18:00')
     ]
     cur.executemany("INSERT INTO LibraryEvents VALUES (?, ?, ?, ?, ?, ?, ?);", events)
 
     # ---------------------
-    # Seed Volunteers and Registered (BCNF-compliant)
+    # Seed Volunteers and Registered
     # ---------------------
-    volunteers = [
-        (1,),
-        (2,),
-        (3,),
-    ]
+    volunteers = [(1,), (2,), (3,)]
     cur.executemany("INSERT INTO Volunteer (volunteer_id) VALUES (?);", volunteers)
 
-    registered = [
-        (1, 1),
-        (2, 2),
-        (3, 3)
-    ]
+    registered = [(1, 1), (2, 2), (3, 3)]
     cur.executemany("INSERT INTO Registered VALUES (?, ?);", registered)
 
     conn.commit()

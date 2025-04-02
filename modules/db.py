@@ -51,8 +51,9 @@ def get_db_connection():
     );
     ''')
 
-    # ========== LIBRARY ITEMS & TYPES ==========
-    # Library Items
+    # ========== LIBRARY ITEMS & TYPES (Revised BCNF-compliant) ==========
+
+    # Core table for all library items
     cur.execute('''
     CREATE TABLE IF NOT EXISTS LibraryItems (
         item_id INTEGER PRIMARY KEY,
@@ -61,17 +62,7 @@ def get_db_connection():
     );
     ''')
 
-    # Records
-    cur.execute('''
-    CREATE TABLE IF NOT EXISTS Records (
-        item_id INTEGER PRIMARY KEY,
-        format TEXT,
-        artist TEXT,
-        FOREIGN KEY (item_id) REFERENCES LibraryItems(item_id)
-    );
-    ''')
-
-    # BookMetadata stores publisher/author info per ISBN
+    # Book metadata (shared by PrintBooks & OnlineBooks)
     cur.execute('''
     CREATE TABLE IF NOT EXISTS BookMetadata (
         ISBN TEXT PRIMARY KEY,
@@ -80,7 +71,17 @@ def get_db_connection():
     );
     ''')
 
-    # PrintBooks just links item_id to ISBN
+    # Media metadata (shared by CDs and Records)
+    cur.execute('''
+    CREATE TABLE IF NOT EXISTS MediaMetadata (
+        media_id INTEGER PRIMARY KEY,
+        format TEXT,
+        artist TEXT,
+        genre TEXT
+    );
+    ''')
+
+    # Subtype: Print Books
     cur.execute('''
     CREATE TABLE IF NOT EXISTS PrintBooks (
         item_id INTEGER PRIMARY KEY,
@@ -90,7 +91,18 @@ def get_db_connection():
     );
     ''')
 
-    # Magazines
+    # Subtype: Online Books
+    cur.execute('''
+    CREATE TABLE IF NOT EXISTS OnlineBooks (
+        item_id INTEGER PRIMARY KEY,
+        url TEXT,
+        ISBN TEXT,
+        FOREIGN KEY (item_id) REFERENCES LibraryItems(item_id),
+        FOREIGN KEY (ISBN) REFERENCES BookMetadata(ISBN)
+    );
+    ''')
+
+    # Subtype: Magazines
     cur.execute('''
     CREATE TABLE IF NOT EXISTS Magazines (
         item_id INTEGER PRIMARY KEY,
@@ -99,21 +111,23 @@ def get_db_connection():
     );
     ''')
 
-    # Online Books
-    cur.execute('''
-    CREATE TABLE IF NOT EXISTS OnlineBooks (
-        item_id INTEGER PRIMARY KEY,
-        ISBN TEXT,
-        FOREIGN KEY (item_id) REFERENCES LibraryItems(item_id)
-    );
-    ''')
-    
-    # CDs
+    # Subtype: CDs
     cur.execute('''
     CREATE TABLE IF NOT EXISTS CDs (
         item_id INTEGER PRIMARY KEY,
-        genre TEXT,
-        FOREIGN KEY (item_id) REFERENCES LibraryItems(item_id)
+        media_id INTEGER,
+        FOREIGN KEY (item_id) REFERENCES LibraryItems(item_id),
+        FOREIGN KEY (media_id) REFERENCES MediaMetadata(media_id)
+    );
+    ''')
+    
+    # Subtype: Records
+    cur.execute('''
+    CREATE TABLE IF NOT EXISTS Records (
+        item_id INTEGER PRIMARY KEY,
+        media_id INTEGER,
+        FOREIGN KEY (item_id) REFERENCES LibraryItems(item_id),
+        FOREIGN KEY (media_id) REFERENCES MediaMetadata(media_id)
     );
     ''')
 

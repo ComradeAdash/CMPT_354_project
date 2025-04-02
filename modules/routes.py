@@ -75,17 +75,19 @@ def init_routes(app):
         query = '''
             SELECT li.item_id, li.title, li.available_copies,
                 pb.ISBN, bm.publisher, bm.author,
-                r.format, r.artist,
+                mm1.format AS record_format, mm1.artist AS record_artist,
                 m.ISSN,
-                ob.ISBN,
-                cd.genre
+                ob.ISBN AS ob_ISBN, ob.url,
+                mm2.genre AS cd_genre
             FROM LibraryItems li
             LEFT JOIN PrintBooks pb ON li.item_id = pb.item_id
             LEFT JOIN BookMetadata bm ON pb.ISBN = bm.ISBN
             LEFT JOIN Records r ON li.item_id = r.item_id
+            LEFT JOIN MediaMetadata mm1 ON r.media_id = mm1.media_id
             LEFT JOIN Magazines m ON li.item_id = m.item_id
             LEFT JOIN OnlineBooks ob ON li.item_id = ob.item_id
             LEFT JOIN CDs cd ON li.item_id = cd.item_id
+            LEFT JOIN MediaMetadata mm2 ON cd.media_id = mm2.media_id
         '''
 
         params = ()
@@ -108,13 +110,11 @@ def init_routes(app):
         conn = sqlite3.connect('library.db')
         cur = conn.cursor()
 
-        # Insert into Borrow table
         cur.execute('''
             INSERT INTO Borrow (item_id, user_id, borrow_status, due_date, fine_amnt)
             VALUES (?, ?, 'borrowed', date('now', '+14 days'), 0)
         ''', (item_id, user_id))
 
-        # Decrease available copies - 1
         cur.execute('''
             UPDATE LibraryItems SET available_copies = available_copies - 1
             WHERE item_id = ? AND available_copies > 0
@@ -134,7 +134,7 @@ def init_routes(app):
 
         if request.method == 'POST':
             user_id = request.form['user_id']
-            item_id = request.form.get('item_id')  # only filled if returning
+            item_id = request.form.get('item_id')
 
             conn = sqlite3.connect('library.db')
             cur = conn.cursor()
@@ -145,8 +145,17 @@ def init_routes(app):
                 borrowed = cur.fetchone()
 
                 if borrowed:
-                    cur.execute('DELETE FROM Borrow WHERE user_id = ? AND item_id = ?', (user_id, item_id))
+                    # Only delete one row (in case multiple are borrowed)
+                    cur.execute('''
+                        DELETE FROM Borrow 
+                        WHERE rowid IN (
+                            SELECT rowid FROM Borrow 
+                            WHERE user_id = ? AND item_id = ?
+                            LIMIT 1
+                        )
+                    ''', (user_id, item_id))
                     cur.execute('UPDATE LibraryItems SET available_copies = available_copies + 1 WHERE item_id = ?', (item_id,))
+                    conn.commit()
                     message = 'Item returned successfully!'
                 else:
                     message = 'You cannot return an item you didn’t borrow.'
@@ -161,11 +170,10 @@ def init_routes(app):
             ''', (user_id,))
 
             borrowed_items = cur.fetchall()
-
-            conn.commit()
             conn.close()
 
         return render_template('return.html', message=message, borrowed_items=borrowed_items, user_id=user_id)
+
       
     # query logic for making a donation
     @app.route('/donate', methods=['GET', 'POST'])
@@ -179,30 +187,28 @@ def init_routes(app):
             conn = sqlite3.connect('library.db')
             cur = conn.cursor()
 
-            # Insert into LibraryItems
             cur.execute('INSERT INTO LibraryItems (title, available_copies) VALUES (?, ?)', (title, copies))
             item_id = cur.lastrowid
 
-            # Insert into appropriate subtype
             if item_type == 'PrintBooks':
                 isbn = request.form.get('isbn')
                 publisher = request.form.get('publisher')
                 author = request.form.get('author')
 
-                # 1. Insert into BookMetadata (ignore if ISBN already exists)
                 cur.execute('''
                     INSERT OR IGNORE INTO BookMetadata (ISBN, publisher, author)
                     VALUES (?, ?, ?)
                 ''', (isbn, publisher, author))
 
-                # 2. Link item to ISBN
                 cur.execute('INSERT INTO PrintBooks (item_id, ISBN) VALUES (?, ?)', (item_id, isbn))
 
             elif item_type == 'Records':
                 format = request.form.get('format')
                 artist = request.form.get('artist')
-                cur.execute('INSERT INTO Records (item_id, format, artist) VALUES (?, ?, ?)', 
-                            (item_id, format, artist))
+                genre = 'Unknown'
+                cur.execute('INSERT INTO MediaMetadata (format, artist, genre) VALUES (?, ?, ?)', (format, artist, genre))
+                media_id = cur.lastrowid
+                cur.execute('INSERT INTO Records (item_id, media_id) VALUES (?, ?)', (item_id, media_id))
 
             elif item_type == 'Magazines':
                 issn = request.form.get('issn')
@@ -210,15 +216,19 @@ def init_routes(app):
 
             elif item_type == 'OnlineBooks':
                 isbn = request.form.get('online_isbn')
-                cur.execute('INSERT INTO OnlineBooks (item_id, ISBN) VALUES (?, ?)', (item_id, isbn))
+                url = request.form.get('url', 'http://example.com')  # fallback default
+                cur.execute('INSERT INTO OnlineBooks (item_id, url, ISBN) VALUES (?, ?, ?)', (item_id, url, isbn))
 
             elif item_type == 'CDs':
                 genre = request.form.get('genre')
-                cur.execute('INSERT INTO CDs (item_id, genre) VALUES (?, ?)', (item_id, genre))
+                format = 'CD'
+                artist = 'Unknown'
+                cur.execute('INSERT INTO MediaMetadata (format, artist, genre) VALUES (?, ?, ?)', (format, artist, genre))
+                media_id = cur.lastrowid
+                cur.execute('INSERT INTO CDs (item_id, media_id) VALUES (?, ?)', (item_id, media_id))
 
             conn.commit()
             conn.close()
-
             message = f'Thank you for donating "{title}"!'
 
         return render_template('donate.html', message=message)

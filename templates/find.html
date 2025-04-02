@@ -23,26 +23,34 @@
             <li>
                 <strong>{{ item[1] }}</strong> — Copies: {{ item[2] }} (ID: {{ item[0] }})<br>
 
-                {% if item[3] %}  {# PrintBook info #}
+                {% if item[3] %}  {# Print Book #}
                     <strong>Print Book</strong><br>
                     ISBN: {{ item[3] }}<br>
                     Publisher: {{ item[4] }}<br>
                     Author: {{ item[5] }}<br>
-                {% elif item[6] %}  {# Record info #}
+                
+                {% elif item[6] and item[7] %}  {# Record #}
                     <strong>Record</strong><br>
                     Format: {{ item[6] }}<br>
                     Artist: {{ item[7] }}<br>
-                {% elif item[8] %}  {# Magazine info #}
+
+                {% elif item[8] %}  {# Magazine #}
                     <strong>Magazine</strong><br>
                     ISSN: {{ item[8] }}<br>
-                {% elif item[9] %}  {# Online Book info #}
+
+                {% elif item[9] %}  {# Online Book #}
                     <strong>Online Book</strong><br>
                     ISBN: {{ item[9] }}<br>
-                {% elif item[10] %}  {# CD info #}
+                    URL: <a href="{{ item[10] }}" target="_blank">{{ item[10] }}</a><br>
+
+                {% elif item[11] %}  {# CD #}
                     <strong>CD</strong><br>
-                    Genre: {{ item[10] }}<br>
+                    Genre: {{ item[11] }}<br>
+                    Format: {{ item[6] }}<br>
+                    Artist: {{ item[7] }}<br>
                 {% endif %}
             </li>
+
             <form method="POST" action="{{ url_for('borrow_item') }}">
                 <input type="hidden" name="item_id" value="{{ item[0] }}">
                 <input type="number" name="user_id" placeholder="Enter your User ID" required>
