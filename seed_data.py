@@ -1,5 +1,5 @@
 import sqlite3
-## THIS POPULATES TABLES WITH DATA !!
+
 def seed():
     conn = sqlite3.connect('library.db')
     cur = conn.cursor()
@@ -95,21 +95,38 @@ def seed():
     cur.executemany("INSERT INTO LibraryItems VALUES (?, ?, ?);", items)
 
     # ---------------------
-    # Seed PrintBooks (item_id = FK)
+    # Seed BookMetadata (new BCNF)
+    # ---------------------
+    book_metadata = [
+        ('978-1-11111-111-1', 'O’Reilly', 'Tom White'),
+        ('978-1-22222-222-2', 'Penguin', 'Mary Smith'),
+        ('978-1-33333-333-3', 'Springer', 'John Doe'),
+        ('978-1-44444-444-4', 'No Starch', 'Alice Kim'),
+        ('978-1-55555-555-5', 'MIT Press', 'Jane Park'),
+        ('978-1-66666-666-6', 'O’Reilly', 'Lucas Tan'),
+        ('978-1-77777-777-7', 'Penguin', 'Mei Lin'),
+        ('978-1-88888-888-8', 'Wiley', 'Derek Sun'),
+        ('978-1-99999-999-9', 'Springer', 'Nora Hall'),
+        ('978-1-10101-010-1', 'O’Reilly', 'George King')
+    ]
+    cur.executemany("INSERT INTO BookMetadata VALUES (?, ?, ?);", book_metadata)
+
+    # ---------------------
+    # Seed PrintBooks (BCNF-compliant version)
     # ---------------------
     print_books = [
-        (1, '978-1-11111-111-1', 'O’Reilly', 'Tom White'),
-        (2, '978-1-22222-222-2', 'Penguin', 'Mary Smith'),
-        (3, '978-1-33333-333-3', 'Springer', 'John Doe'),
-        (4, '978-1-44444-444-4', 'No Starch', 'Alice Kim'),
-        (5, '978-1-55555-555-5', 'MIT Press', 'Jane Park'),
-        (6, '978-1-66666-666-6', 'O’Reilly', 'Lucas Tan'),
-        (7, '978-1-77777-777-7', 'Penguin', 'Mei Lin'),
-        (8, '978-1-88888-888-8', 'Wiley', 'Derek Sun'),
-        (9, '978-1-99999-999-9', 'Springer', 'Nora Hall'),
-        (10, '978-1-10101-010-1', 'O’Reilly', 'George King')
+        (1, '978-1-11111-111-1'),
+        (2, '978-1-22222-222-2'),
+        (3, '978-1-33333-333-3'),
+        (4, '978-1-44444-444-4'),
+        (5, '978-1-55555-555-5'),
+        (6, '978-1-66666-666-6'),
+        (7, '978-1-77777-777-7'),
+        (8, '978-1-88888-888-8'),
+        (9, '978-1-99999-999-9'),
+        (10, '978-1-10101-010-1')
     ]
-    cur.executemany("INSERT INTO PrintBooks VALUES (?, ?, ?, ?);", print_books)
+    cur.executemany("INSERT INTO PrintBooks VALUES (?, ?);", print_books)
 
     # ---------------------
     # Seed Borrow
@@ -145,9 +162,23 @@ def seed():
     ]
     cur.executemany("INSERT INTO LibraryEvents VALUES (?, ?, ?, ?, ?, ?, ?);", events)
 
+    # ---------------------
+    # Seed Volunteers and Registered (BCNF-compliant)
+    # ---------------------
+    volunteers = [
+        (1,),
+        (2,),
+        (3,),
+    ]
+    cur.executemany("INSERT INTO Volunteer (volunteer_id) VALUES (?);", volunteers)
+
+    registered = [
+        (1, 1),
+        (2, 2),
+        (3, 3)
+    ]
+    cur.executemany("INSERT INTO Registered VALUES (?, ?);", registered)
+
     conn.commit()
     conn.close()
-    print("Dummy data inserted successfully.")
-
-# Run the seeder
-seed()
+    print("✅ Dummy data inserted successfully.")

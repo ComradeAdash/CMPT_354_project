@@ -74,13 +74,14 @@ def init_routes(app):
 
         query = '''
             SELECT li.item_id, li.title, li.available_copies,
-                pb.ISBN, pb.publisher, pb.author,
+                pb.ISBN, bm.publisher, bm.author,
                 r.format, r.artist,
                 m.ISSN,
                 ob.ISBN,
                 cd.genre
             FROM LibraryItems li
             LEFT JOIN PrintBooks pb ON li.item_id = pb.item_id
+            LEFT JOIN BookMetadata bm ON pb.ISBN = bm.ISBN
             LEFT JOIN Records r ON li.item_id = r.item_id
             LEFT JOIN Magazines m ON li.item_id = m.item_id
             LEFT JOIN OnlineBooks ob ON li.item_id = ob.item_id
@@ -98,7 +99,12 @@ def init_routes(app):
 
         return render_template('find.html', results=results, search_query=search_query, message=request.args.get('message'))
 
+<<<<<<< HEAD
     # query logic for borrowing an item
+=======
+
+    
+>>>>>>> 157afe24bf912fff8c859dbeae2a8167c41526cc
     @app.route('/borrow', methods=['POST'])
     def borrow_item():
         item_id = request.form['item_id']
@@ -187,8 +193,15 @@ def init_routes(app):
                 isbn = request.form.get('isbn')
                 publisher = request.form.get('publisher')
                 author = request.form.get('author')
-                cur.execute('INSERT INTO PrintBooks (item_id, ISBN, publisher, author) VALUES (?, ?, ?, ?)', 
-                            (item_id, isbn, publisher, author))
+
+                # 1. Insert into BookMetadata (ignore if ISBN already exists)
+                cur.execute('''
+                    INSERT OR IGNORE INTO BookMetadata (ISBN, publisher, author)
+                    VALUES (?, ?, ?)
+                ''', (isbn, publisher, author))
+
+                # 2. Link item to ISBN
+                cur.execute('INSERT INTO PrintBooks (item_id, ISBN) VALUES (?, ?)', (item_id, isbn))
 
             elif item_type == 'Records':
                 format = request.form.get('format')
@@ -214,6 +227,7 @@ def init_routes(app):
             message = f'Thank you for donating "{title}"!'
 
         return render_template('donate.html', message=message)
+<<<<<<< HEAD
 
     # filtering and searching through events
     @app.route('/findEvent', methods=['GET', 'POST'])
@@ -293,3 +307,5 @@ def init_routes(app):
             conn.close()
 
         return render_template('help.html')
+=======
+>>>>>>> 157afe24bf912fff8c859dbeae2a8167c41526cc
