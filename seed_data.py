@@ -81,6 +81,7 @@ def seed():
     # Seed LibraryItems
     # ---------------------
     items = [
+        # Original 10
         (1, 3, 'Intro to Databases'),
         (2, 2, 'World History'),
         (3, 5, 'Python Basics'),
@@ -90,8 +91,44 @@ def seed():
         (7, 3, 'Modern Art'),
         (8, 1, 'Quantum Physics'),
         (9, 6, 'Digital Photography'),
-        (10, 5, 'Ocean Life')
+        (10, 5, 'Ocean Life'),
+
+        # PrintBooks
+        (11, 2, 'Neverwhere'),
+        (12, 3, 'Animal Farm'),
+        (13, 4, 'The Cursed Child'),
+        (14, 2, 'The Dark Tower'),
+        (15, 1, 'Throne of Glass'),
+
+        # OnlineBooks
+        (16, 5, 'Neverwhere Online'),
+        (17, 4, 'Animal Farm Online'),
+        (18, 3, 'The Cursed Child Online'),
+        (19, 2, 'The Dark Tower Online'),
+        (20, 1, 'Throne of Glass Online'),
+
+        # Magazines
+        (21, 1, 'Global Science'),
+        (22, 1, 'Tech Monthly'),
+        (23, 1, 'Art Review'),
+        (24, 1, 'History Today'),
+        (25, 1, 'Kids Corner'),
+
+        # CDs
+        (26, 2, 'Adele Greatest Hits'),
+        (27, 3, 'Drake Essentials'),
+        (28, 4, 'DAMN. by Kendrick'),
+        (29, 5, 'Ariana Grande Live'),
+        (30, 2, 'Lorde Mood'),
+
+        # Records
+        (31, 1, 'The Beatles Classics'),
+        (32, 2, 'Beyoncé Platinum'),
+        (33, 3, 'Radiohead Mix'),
+        (34, 4, 'Vinyl Vibes'),
+        (35, 1, 'Jazz Fusion')
     ]
+
     cur.executemany("INSERT INTO LibraryItems VALUES (?, ?, ?);", items)
 
     # ---------------------
@@ -103,6 +140,11 @@ def seed():
         ('978-1-33333-333-3', 'Springer', 'John Doe'),
         ('978-1-44444-444-4', 'No Starch', 'Alice Kim'),
         ('978-1-55555-555-5', 'MIT Press', 'Jane Park'),
+        ('978-1-66666-105-5', 'HarperCollins', 'Neil Gaiman'),
+        ('978-1-66666-106-6', 'Random House', 'George Orwell'),
+        ('978-1-66666-107-7', 'Scholastic', 'J.K. Rowling'),
+        ('978-1-66666-108-8', 'Simon & Schuster', 'Stephen King'),
+        ('978-1-66666-109-9', 'Bloomsbury', 'Sarah J. Maas')
     ]
     cur.executemany("INSERT INTO BookMetadata VALUES (?, ?, ?);", book_metadata)
 
@@ -114,50 +156,110 @@ def seed():
         (2, '978-1-22222-222-2'),
         (3, '978-1-33333-333-3'),
         (4, '978-1-44444-444-4'),
-        (5, '978-1-55555-555-5')
+        (5, '978-1-55555-555-5'),
+        (11, '978-1-66666-105-5'),
+        (12, '978-1-66666-106-6'),
+        (13, '978-1-66666-107-7'),
+        (14, '978-1-66666-108-8'),
+        (15, '978-1-66666-109-9')
     ]
+
     cur.executemany("INSERT INTO PrintBooks VALUES (?, ?);", print_books)
 
     # ---------------------
     # Seed OnlineBooks
     # ---------------------
     online_books = [
-        (6, 'http://example.com/datast', '978-1-11111-111-1'),
-        (7, 'http://example.com/modernart', '978-1-22222-222-2')
+        (6, 'http://example.com/datast', '978-1-11111-111-1'),                  # Data Structures
+        (7, 'http://example.com/modernart', '978-1-22222-222-2'),              # Modern Art
+
+        (16, 'http://example.com/neverwhere', '978-1-66666-105-5'),            # Neverwhere Online
+        (17, 'http://example.com/animalfarm', '978-1-66666-106-6'),            # Animal Farm Online
+        (18, 'http://example.com/cursedchild', '978-1-66666-107-7'),           # The Cursed Child Online
+        (19, 'http://example.com/darktower', '978-1-66666-108-8'),             # The Dark Tower Online
+        (20, 'http://example.com/throneofglass', '978-1-66666-109-9'),         # Throne of Glass Online
+
+        (28, 'http://example.com/neverwhere', '978-1-66666-105-5'),            # Reused (ok if duplicates allowed)
+        (29, 'http://example.com/animalfarm', '978-1-66666-106-6'),
+        (30, 'http://example.com/cursedchild', '978-1-66666-107-7'),
+        (31, 'http://example.com/darktower', '978-1-66666-108-8'),
+        (32, 'http://example.com/throneofglass', '978-1-66666-109-9')
     ]
+
+
     cur.executemany("INSERT INTO OnlineBooks (item_id, url, ISBN) VALUES (?, ?, ?);", online_books)
 
     # ---------------------
     # Seed Magazines
     # ---------------------
     magazines = [
-        (8, '1234-5678')
+        (8, '1234-5678'),
+        (19, '2345-6789'),
+        (20, '3456-7890'),
+        (21, '4567-8901'),
+        (22, '5678-9012'),
+        (23, '6789-0123'),
+        (24, '7890-1234'),
+        (25, '8901-2345'),
+        (26, '9012-3456'),
+        (27, '0123-4567')
     ]
+
     cur.executemany("INSERT INTO Magazines VALUES (?, ?);", magazines)
 
     # ---------------------
     # Seed MediaMetadata (for CDs and Records)
     # ---------------------
     media_metadata = [
-        (1, 'Vinyl', 'Fleetwood Mac', 'Rock'),
-        (2, 'CD', 'Taylor Swift', 'Pop')
+        (1, 'Vinyl', 'Fleetwood Mac', 'Rock'),       # Digital Photography (9)
+        (2, 'CD', 'Taylor Swift', 'Pop'),            # Ocean Life (10)
+        (3, 'CD', 'Adele', 'Soul'),                  # History Today (24)
+        (4, 'Vinyl', 'The Beatles', 'Rock'),         # The Beatles Classics (31)
+        (5, 'CD', 'Drake', 'Hip-Hop'),               # Kids Corner (25)
+        (6, 'Vinyl', 'Beyoncé', 'R&B'),              # Beyoncé Platinum (32)
+        (7, 'CD', 'Kendrick Lamar', 'Rap'),          # DAMN. by Kendrick (28)
+        (8, 'Vinyl', 'Radiohead', 'Alternative'),    # Radiohead Mix (33)
+        (9, 'CD', 'Ariana Grande', 'Pop'),           # Ariana Grande Live (29)
+        (10, 'Vinyl', 'Lorde', 'Indie'),             # Lorde Mood (30)
+        (11, 'Vinyl', 'Various Artists', 'Jazz')     # Jazz Fusion (35)
     ]
+
+
+
     cur.executemany("INSERT INTO MediaMetadata VALUES (?, ?, ?, ?);", media_metadata)
 
     # ---------------------
     # Seed Records
     # ---------------------
     records = [
-        (9, 1)
+        (9, 1),     # Digital Photography
+        (21, 6),    # Global Science
+        (22, 8),    # Tech Monthly
+        (23, 10),   # Art Review
+        (31, 4),    # The Beatles Classics
+        (32, 6),    # Beyoncé Platinum
+        (33, 8),    # Radiohead Mix
+        (34, 10),   # Vinyl Vibes
+        (35, 11)    # Jazz Fusion
     ]
+
     cur.executemany("INSERT INTO Records VALUES (?, ?);", records)
 
     # ---------------------
     # Seed CDs
     # ---------------------
     cds = [
-        (10, 2)
+        (10, 2),   # Ocean Life → Taylor Swift
+        (24, 3),   # History Today → Adele
+        (25, 5),   # Kids Corner → Drake
+        (26, 7),   # Adele Greatest Hits → Kendrick Lamar
+        (27, 9),   # Drake Essentials → Ariana Grande
+        (28, 7),   # DAMN. by Kendrick → Kendrick Lamar
+        (29, 9),   # Ariana Grande Live → Ariana Grande
+        (30, 10)   # Lorde Mood → Lorde
     ]
+
+
     cur.executemany("INSERT INTO CDs (item_id, media_id) VALUES (?, ?);", cds)
 
     # ---------------------
@@ -202,6 +304,35 @@ def seed():
 
     registered = [(1, 1), (2, 2), (3, 3)]
     cur.executemany("INSERT INTO Registered VALUES (?, ?);", registered)
+
+    # ---------------------
+    media_metadata_fixes = [
+        (12, 'Vinyl', 'Various Artists', 'Science'),   # Global Science (21)
+        (13, 'Vinyl', 'Various Artists', 'Tech'),      # Tech Monthly (22)
+        (14, 'Vinyl', 'Various Artists', 'Art'),       # Art Review (23)
+        (15, 'CD', 'Various Artists', 'History'),      # History Today (24)
+        (16, 'CD', 'Various Artists', 'Kids'),         # Kids Corner (25)
+        (17, 'CD', 'Adele', 'Soul'),                   # Adele Greatest Hits (26)
+        (18, 'CD', 'Drake', 'Hip-Hop')                 # Drake Essentials (27)
+    ]
+    cur.executemany("INSERT INTO MediaMetadata VALUES (?, ?, ?, ?);", media_metadata_fixes)
+
+    # CDs
+    cds_fixes = [
+        (24, 15),  # History Today
+        (25, 16),  # Kids Corner
+        (26, 17),  # Adele Greatest Hits
+        (27, 18)   # Drake Essentials
+    ]
+    cur.executemany("UPDATE CDs SET media_id = ? WHERE item_id = ?;", [(m[1], m[0]) for m in cds_fixes])
+
+    # Records
+    records_fixes = [
+        (21, 12),  # Global Science
+        (22, 13),  # Tech Monthly
+        (23, 14)   # Art Review
+    ]
+    cur.executemany("UPDATE Records SET media_id = ? WHERE item_id = ?;", [(m[1], m[0]) for m in records_fixes])
 
     conn.commit()
     conn.close()
