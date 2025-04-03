@@ -44,6 +44,7 @@ ul {
 }
 
 li {
+    text-align: center;
     background: white;
     padding: 1rem;
     margin-bottom: 1rem;
@@ -56,12 +57,6 @@ em {
     color: gray;
 }
 
-/*
----------------------------------
-Event Registration Form Style
----------------------------------
-*/
-
 .modal {
     display: none;
     position: fixed;
@@ -73,7 +68,6 @@ Event Registration Form Style
     background-color: rgba(0, 0, 0, 0.5);
 }
 
-/* Modal content */
 .modal-content {
     background-color: white;
     padding: 20px;
@@ -84,7 +78,6 @@ Event Registration Form Style
     position: relative;
 }
 
-/* Close button */
 .close {
     position: absolute;
     top: 10px;
@@ -103,6 +96,7 @@ input, #openEventForm {
 ---------------------------------
 */
 .card {
+    list-style: none;
     background: white;
     padding: 1rem;
     margin-bottom: 1.5rem;
@@ -135,6 +129,8 @@ input, #openEventForm {
     border: 1px solid #c3e6cb;
 }
 
+/* Navbar */
+
 .navbar {
     background-color: #40338f;
     padding: 1rem;
@@ -155,6 +151,8 @@ input, #openEventForm {
     color: #c2b6ff;
 }
 
+/* Homepage */
+
 main {
     max-width: 800px;
     margin: auto;
@@ -173,5 +171,13 @@ main {
     border-radius: 10px;
     width: 600px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+.register-container{
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 600px;
     text-align: center;
 }
