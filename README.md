@@ -1,5 +1,5 @@
 # CMPT_354_project
-A database application for CMPT 354 @ SFU
+A database application for CMPT 354 @ SFU built with Flask and SQlite. 
 
 ## Usage
   - There is a login and registration screen, although authentication has not been implemented. Feel free to use these features to create your own user
