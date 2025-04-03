@@ -43,24 +43,28 @@ def init_routes(app):
     # users who don't have an account can create one, before getting access to the library features. 
     @app.route('/register', methods=['GET', 'POST'])
     def register():
+        message = ""
         if request.method == 'POST':
             conn = sqlite3.connect('library.db')
             cur = conn.cursor()
-            email = request.form['email']
-            name = request.form['name']
-            phone_num = request.form['phone']
+            try: 
+                email = request.form['email']
+                name = request.form['name']
+                phone_num = request.form['phone']
 
-            cur.execute('''
-                INSERT INTO LibraryUsers (name,email,phone_number) VALUES (?, ?, ?);
-            ''',(name,email,phone_num))
-            user_id = cur.lastrowid
-            conn.commit()
-            conn.close()
-            
+                cur.execute('''
+                    INSERT INTO LibraryUsers (name,email,phone_number) VALUES (?, ?, ?);
+                ''',(name,email,phone_num))
+                user_id = cur.lastrowid
+                conn.commit()
+                conn.close()
+            except sqlite3.IntegrityError as e:
+                print(f"Integrity Error: {e}")
+                return render_template('register.html', message="User Already Exists")
+
             return render_template('register.html', success=True, template_folder='../templates', message=f"{user_id}")
 
-        return render_template('register.html', success=False, template_folder='../templates')
-
+        return render_template('register.html', success=False, template_folder='../templates',message=message)
 
     # filtering and searching through library items
     @app.route('/find', methods=['GET', 'POST'])
