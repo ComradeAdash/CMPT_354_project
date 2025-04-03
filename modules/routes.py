@@ -61,6 +61,9 @@ def init_routes(app):
             except sqlite3.IntegrityError as e:
                 print(f"Integrity Error: {e}")
                 return render_template('register.html', message="User Already Exists")
+            except sqlite3.OperationalError as e:
+                print(f"Operational Error: {e}")
+                return render_template('register.html', message="This Account information already exists!")
 
             return render_template('register.html', success=True, template_folder='../templates', message=f"{user_id}")
 
@@ -130,6 +133,9 @@ def init_routes(app):
         except sqlite3.IntegrityError as e:
             print(f"Integrity Error: {e}")
             return redirect(url_for('find_item', message='There are no Copies Available Sorry!'))
+        except sqlite3.OperationalError as e:
+                print(f"Operational Error: {e}")
+                return redirect(url_for('find_item', message='Refresh the page please.'))
 
         conn.commit()
         conn.close()
@@ -144,43 +150,51 @@ def init_routes(app):
         user_id = ''
 
         if request.method == 'POST':
-            user_id = request.form['user_id']
-            item_id = request.form.get('item_id')
+            try: 
+                user_id = request.form['user_id']
+                item_id = request.form.get('item_id')
 
-            conn = sqlite3.connect('library.db')
-            cur = conn.cursor()
+                conn = sqlite3.connect('library.db')
+                cur = conn.cursor()
 
-            # If the user clicked "Return"
-            if item_id:
-                cur.execute('SELECT * FROM Borrow WHERE user_id = ? AND item_id = ?', (user_id, item_id))
-                borrowed = cur.fetchone()
+                # If the user clicked "Return"
+                if item_id:
+                    cur.execute('SELECT * FROM Borrow WHERE user_id = ? AND item_id = ?', (user_id, item_id))
+                    borrowed = cur.fetchone()
 
-                if borrowed:
-                    # Only delete one row (in case multiple are borrowed)
-                    cur.execute('''
-                        DELETE FROM Borrow 
-                        WHERE rowid IN (
-                            SELECT rowid FROM Borrow 
-                            WHERE user_id = ? AND item_id = ?
-                            LIMIT 1
-                        )
-                    ''', (user_id, item_id))
-                    # cur.execute('UPDATE LibraryItems SET available_copies = available_copies + 1 WHERE item_id = ?', (item_id,))
-                    conn.commit()
-                    message = 'Item returned successfully!'
-                else:
-                    message = 'You cannot return an item you didn’t borrow.'
+                    if borrowed:
+                        # Only delete one row (in case multiple are borrowed)
+                        cur.execute('''
+                            DELETE FROM Borrow 
+                            WHERE rowid IN (
+                                SELECT rowid FROM Borrow 
+                                WHERE user_id = ? AND item_id = ?
+                                LIMIT 1
+                            )
+                        ''', (user_id, item_id))
+                        # cur.execute('UPDATE LibraryItems SET available_copies = available_copies + 1 WHERE item_id = ?', (item_id,))
+                        conn.commit()
+                        message = 'Item returned successfully!'
+                    else:
+                        message = 'You cannot return an item you didn’t borrow.'
 
-            # Get all current borrowings for this user
-            cur.execute('''
-                SELECT li.item_id, li.title, li.available_copies, COUNT(*) as copies_borrowed
-                FROM Borrow b
-                JOIN LibraryItems li ON b.item_id = li.item_id
-                WHERE b.user_id = ?
-                GROUP BY li.item_id, li.title, li.available_copies
-            ''', (user_id,))
+                # Get all current borrowings for this user
+                cur.execute('''
+                    SELECT li.item_id, li.title, li.available_copies, COUNT(*) as copies_borrowed
+                    FROM Borrow b
+                    JOIN LibraryItems li ON b.item_id = li.item_id
+                    WHERE b.user_id = ?
+                    GROUP BY li.item_id, li.title, li.available_copies
+                ''', (user_id,))
 
-            borrowed_items = cur.fetchall()
+                borrowed_items = cur.fetchall()
+            except sqlite3.IntegrityError as e:
+                print(f"Integrity Error: {e}")
+                return redirect(url_for('return_item', message='Item Does not exist'))
+            except sqlite3.OperationalError as e:
+                print(f"Operational Error: {e}")
+                return redirect(url_for('return_item', message='Refresh the page please.'))
+
             conn.close()
 
         return render_template('return.html', message=message, borrowed_items=borrowed_items, user_id=user_id)
@@ -345,4 +359,4 @@ def init_routes(app):
             conn.commit()
             conn.close()
 
-        return render_template('help.html')
+        return render_template('help.html',message="Ticket Submitted, Please check your email for a follow up!")
