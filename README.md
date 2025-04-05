@@ -17,7 +17,7 @@ $ pip install virtualenv
 $ virtualenv env
 ```
 
-3. Then run the command: (Note -  ensure your terminal window, powershell etc ,has permissions for script executions enabled.) It may look something like: 'Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass' depending on usage.
+3. Then run the command: 
 - macOS & Linux
 ```
 $ source ./env/bin/activate
@@ -26,6 +26,11 @@ or
 - Windows
 ```
 $ .\env\Scripts\activate
+```
+
+Note: If activation fails try running: (this command may differ on your OS)
+```
+$ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 ```
 
 4. Then install the dependencies:
