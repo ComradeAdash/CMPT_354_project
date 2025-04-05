@@ -2,9 +2,9 @@
 A database application for CMPT 354 @ SFU built with Flask and SQlite. 
 
 ## Usage
-  - There is a login and registration screen, although authentication has not been implemented. Feel free to use these features to create your own user
+  - There is a login and registration screen, although authentication has not been implemented. (logging in doesnt matter essentially), but feel free to register your own users. 
   - The Entire Appication can be used with our seeded daata - Ex) Alice Smith, USER_ID: 1 - can be used to test the application. 
-  - A USER_ID is needed to perform features because of this. 
+  - A USER_ID is needed for borrowing, registering, submitting a request etc. Feel Free to use USER_ID: 1 to test. 
 
 ## How to Run
 1. Install `virtualenv`:
